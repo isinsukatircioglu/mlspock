@@ -11,6 +11,11 @@ You can train new networks using ```train.py```. For example:
 ```
 python train.py --model_type=ptr --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=train --batch_size=128 --epoch=1 --segment=bottom --norm=snorm
 ```
+You can continue training a pre-trained model using *.pth files that can be referenced using local filenames. For example:
+```
+python train.py --path_model=/myhome/mlspock/baselines/results/ptr_bottom_all_snorm_2024-04-05_08-31-23/best_model.pth --model_type=ptr --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=train --batch_size=128 --epoch=50 --segment=bottom --norm=snorm
+```
 The results of each training run are saved to a newly created directory under ```~/results```.
+
 ## Further Information
 This repository builds upon the codabase of [Pointnet, Pointnet++](https://github.com/yanx27/Pointnet_Pointnet2_pytorch) and [Point-Transformers](https://github.com/qq456cvb/Point-Transformers).
