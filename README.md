@@ -21,5 +21,11 @@ You can evaluate a pre-trained model by ensuring that the model file is named ``
 ```
 python train.py --path_model=./pretrained/pnet2_bottom_all_snorm_2024-04-29_18-33-32 --model_type=pnet2 --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=eval --segment=bottom --norm=snorm
 ```
+## Test
+To test the pretrained model on unseen examples, within each scenario folder, the 3D point cloud of each individual column should be saved in a separate .npy file, for instance:: ```/test_240430/W33X263-Collapse_consistent-RC90/pts029.npy (test_folder/scenario_name/p3d.npy)```.
+Afterward, you can obtain the predictions by running::
+```
+python train.py --path_model=./pretrained/pnet2_bottom_all_snorm_2024-04-29_18-33-32 --model_type=pnet2 --path_data=/mydata/mlspock/shared/test_240430 --mode=test --segment=bottom --norm=snorm
+```
 ## Further Information
 This repository builds upon the codabase of [Pointnet, Pointnet++](https://github.com/yanx27/Pointnet_Pointnet2_pytorch) and [Point-Transformers](https://github.com/qq456cvb/Point-Transformers).
