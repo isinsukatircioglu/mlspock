@@ -9,7 +9,7 @@ This repository contains the code for the project titled "Machine Learning Suppo
 ## Training
 You can train new networks using ```train.py```. For example:
 ```
-python train.py --model_type=pnet2 --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=train --batch_size=128 --epoch=1 --segment=bottom --norm=snorm
+python train.py --model_type=pnet2 --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=train --batch_size=128 --epoch=200 --segment=bottom --norm=snorm
 ```
 You can continue training a pre-trained model using *.pth files that can be referenced using local filenames. For example:
 ```
