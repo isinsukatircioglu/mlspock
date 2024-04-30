@@ -17,7 +17,7 @@ python train.py --path_model=/myhome/mlspock/baselines/results/pnet2_bottom_all_
 ```
 The results of each training run are saved to a newly created directory under ```~/results```.
 
-You can evaluate a pre-trained model as follows:
+You can evaluate a pre-trained model by ensuring that the model file is named ```best_model.pth```, and then setting the ```path_model``` option to the path where this file is located:
 ```
 python train.py --path_model=./pretrained/pnet2_bottom_all_snorm_2024-04-29_18-33-32 --model_type=pnet2 --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=eval --segment=bottom --norm=snorm
 ```
