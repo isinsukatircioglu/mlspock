@@ -23,7 +23,8 @@ python train.py --path_model=./pretrained/pnet2_bottom_all_snorm_2024-04-29_18-3
 ```
 ## Test
 To test the pretrained model on unseen examples, within each scenario folder, the 3D point cloud of each individual column should be saved in a separate .npy file, for instance:: ```/test_240430/W33X263-Collapse_consistent-RC90/pts029.npy (test_folder/scenario_name/p3d.npy)```.
-Afterward, you can obtain the predictions by running::
+
+Afterward, you can obtain the predictions by running:
 ```
 python train.py --path_model=./pretrained/pnet2_bottom_all_snorm_2024-04-29_18-33-32 --model_type=pnet2 --path_data=/mydata/mlspock/shared/test_240430 --mode=test --segment=bottom --norm=snorm
 ```
