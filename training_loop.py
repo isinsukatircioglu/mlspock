@@ -188,17 +188,20 @@ def test(opts):
     #Load data
     torch.manual_seed(37)
     batch_size = opts.batch_size
-    testset = PointCloudDatasetTest(opts.path_data, opts.segment, opts.norm, opts.lprot)
-    testloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=8, pin_memory=True)
-    device = get_device()
-
-    # Construct the network
-    net = util.construct_class_by_name(**opts.model_kwargs).to(device)
-    checkpoint = torch.load(os.path.join(opts.path_model, 'best_model.pth'))
-    net.load_state_dict(checkpoint['model'])
-    pred_test = predict(net, testloader, device)
-    rc_pred_final_test = np.vstack([(pred_test[i]).detach().cpu().numpy() for i in range(len(pred_test))])
-    print(rc_pred_final_test.shape)
-    print(rc_pred_final_test)
-    os.makedirs(os.path.join(opts.path_model, 'predictions'), exist_ok=True)
-    np.save(os.path.join(opts.path_model, 'predictions', 'results_' + testset.data_name + '_model_' + opts.model_type +'.npy'), rc_pred_final_test)
+    test_cases = os.listdir(opts.path_data)
+    for tc in test_cases:
+        print('test case: ', tc)
+        test_folder = os.path.join(opts.path_data, tc)
+        testset = PointCloudDatasetTest(test_folder, opts.segment, opts.norm, opts.lprot)
+        testloader = DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=8, pin_memory=True)
+        device = get_device()
+        # Construct the network
+        net = util.construct_class_by_name(**opts.model_kwargs).to(device)
+        checkpoint = torch.load(os.path.join(opts.path_model, 'best_model.pth'))
+        net.load_state_dict(checkpoint['model'])
+        pred_test = predict(net, testloader, device)
+        rc_pred_final_test = np.vstack([(pred_test[i]).detach().cpu().numpy() for i in range(len(pred_test))])
+        print(rc_pred_final_test.shape)
+        print(rc_pred_final_test)
+        os.makedirs(os.path.join(test_folder, 'predictions'), exist_ok=True)
+        np.save(os.path.join(test_folder, 'predictions', 'results_' + testset.data_name + '_model_' + opts.model_type +'.npy'), rc_pred_final_test)
