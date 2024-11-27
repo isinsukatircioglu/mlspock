@@ -1,5 +1,6 @@
 # ML-SPOCK
 This repository contains the code for the project titled "Machine Learning Supported System for Performance Assessment of Steel Structures Under Extreme Operating Conditions and Risk Management."
+![mlspock_overview](https://github.com/user-attachments/assets/bd03fc4a-6eab-4000-b8a8-41b4e9fa01fc)
 
 ## Setup
 * Download and install miniconda.
