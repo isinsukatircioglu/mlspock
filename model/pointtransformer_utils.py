@@ -86,11 +86,11 @@ class PointTransformerCls(nn.Module):
         self.backbone = Backbone(npoints, nblocks, nneighbor, n_c, d_points, transformer_dim)
         #npoints, nblocks, nneighbor, n_c, d_points = cfg.num_point, cfg.model.nblocks, cfg.model.nneighbor, cfg.num_class, cfg.input_dim
         self.fc2 = nn.Sequential(
-            nn.Linear(32 * 2 ** nblocks, 256),
+            nn.Linear(32 * 2 ** nblocks, 64),
             nn.ReLU(),
-            nn.Linear(256, 64),
+            nn.Linear(64, 32),
             nn.ReLU(),
-            nn.Linear(64, n_c)
+            nn.Linear(32, n_c)
         )
         self.nblocks = nblocks
         self.sigmoid_layer = nn.Sigmoid()

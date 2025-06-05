@@ -32,7 +32,9 @@ class PointNetCls(nn.Module):
         self.relu = nn.ReLU()
         self.sigmoid_layer = nn.Sigmoid()
 
-    def forward(self, x):
+    def forward(self, x, knn_idx, lratio, boundary, lprotocol):
+        if x.shape[-1] == 3:
+            x = x.permute(0,2,1)
         # import pdb
         # pdb.set_trace()
         x, trans, trans_feat = self.feat(x)
@@ -41,7 +43,10 @@ class PointNetCls(nn.Module):
         x = self.fc3(x)
         #x = F.log_softmax(x, dim=1)
         x = (self.sigmoid_layer(x) * (self.max_value - self.min_value)) + self.min_value 
-        return x, trans_feat
+        if self.training:
+            return x, trans_feat
+        else:
+            return x
 
 class get_loss(torch.nn.Module):
     def __init__(self, mat_diff_loss_scale=0.001):

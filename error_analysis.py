@@ -130,7 +130,7 @@ def plot_pred_vs_gt_combi(error_dict, save_dict):
         g.axes[1,0].set_yticklabels([f'{tick:.2f}' for tick in reserve_capacity_bins_pred], fontsize=14)
         # Add a big title to the entire plot
         plt.tight_layout(rect=[0, 0, 1, 0.96])
-        g.fig.suptitle('Ground Truth vs Predicted Reserve Capacity for ' + (save_dict.split('/')[-1]).upper(), fontsize=12)
+        g.fig.suptitle('Ground Truth vs Predicted Reserve Capacity', fontsize=12)
         if not os.path.exists(os.path.join(save_dict, 'combinations')):
             os.makedirs(os.path.join(save_dict, 'combinations'), exist_ok=True)
 
@@ -173,7 +173,6 @@ def plot_pred_vs_gt(error_dict, save_dict, category, threshold=0.6, lprot=['Symm
     df = pd.DataFrame(sns_dict)
     row_values = df['fwbw'].unique()
     # Generate lmplot with trendline (ci=None)
-    #g = sns.lmplot(data=df, x="x", y="y", hue='scenario', palette="bright", row="fwbw", fit_reg=True, x_ci='sd', ci=50, n_boot=5, height=8, aspect=1, legend=False, scatter=False)
     g = sns.lmplot(data=df, x="x", y="y", hue='scenario', palette="bright", row="fwbw", ci=95, height=8, aspect=1, legend=False, scatter=False)
 
     # Add scatter plot on top
@@ -202,9 +201,8 @@ def plot_pred_vs_gt(error_dict, save_dict, category, threshold=0.6, lprot=['Symm
     g.axes[0,0].set_yticklabels([f'{tick:.2f}' for tick in reserve_capacity_bins_pred], fontsize=14)
     g.axes[1,0].set_yticks(reserve_capacity_bins_pred)
     g.axes[1,0].set_yticklabels([f'{tick:.2f}' for tick in reserve_capacity_bins_pred], fontsize=14)
-    # Add a big title to the entire plot
     plt.tight_layout(rect=[0, 0, 1, 0.96])
-    g.fig.suptitle('Ground Truth vs Predicted Reserve Capacity for ' + (save_dict.split('/')[-1]).upper(), fontsize=12)
+    g.fig.suptitle('Ground Truth vs Predicted Reserve Capacity', fontsize=12)
     plt.savefig(os.path.join(save_dict, 'pred_vs_gt_' + save_dict.split('/')[-1]+ '_category_' + str(category)+ '_scen_' +  lprot[0] +'_ci.png'))
 
 def plot_mape_vs_rc_combi(error_dict, save_dict):
@@ -267,7 +265,7 @@ def plot_mape_vs_rc_combi(error_dict, save_dict):
         # Add a big title to the entire plot
         plt.tight_layout(rect=[0, 0, 1, 0.96])
         g.axes[0,0].tick_params(axis='x', pad=10)
-        g.fig.suptitle('Average Percengage Error for ' + (save_dict.split('/')[-1]).upper(), fontsize=20)
+        g.fig.suptitle('Average Percengage Error', fontsize=20)
         if not os.path.exists(os.path.join(save_dict, 'combinations')):
             os.makedirs(os.path.join(save_dict, 'combinations'), exist_ok=True)
         plt.savefig(os.path.join(save_dict, 'combinations', 'mape_vs_rc_combi' + save_dict.split('/')[-1]+ '_scenario_' + (scen)+ '.png'))
@@ -331,10 +329,9 @@ def plot_mape_vs_rc(error_dict, save_dict, category):
     g.axes[0,0].set_yticklabels([f'{tick}' for tick in ace_bins], fontsize=20)
     g.axes[1,0].set_yticks(ace_bins)
     g.axes[1,0].set_yticklabels([f'{tick:.2f}' for tick in ace_bins], fontsize=20)
-    # Add a big title to the entire plot
     plt.tight_layout(rect=[0, 0, 1, 0.96])
     g.axes[0,0].tick_params(axis='x', pad=10)
-    g.fig.suptitle('Average Percengage Error for ' + (save_dict.split('/')[-1]).upper(), fontsize=20)
+    g.fig.suptitle('Average Percengage Error', fontsize=20)
     plt.savefig(os.path.join(save_dict, 'mape_vs_rc_' + save_dict.split('/')[-1]+ '_category_' + str(category)+ '.png'))
 
 def err_per_reserve_capacity(error_dict):
@@ -347,7 +344,6 @@ def err_per_reserve_capacity(error_dict):
         mean_err =  np.mean(np.array(err))
         std_err = np.std(np.array(err))
         print('RC+ = ', rcb, ' mean error: ', mean_err, 'std : ', std_err)
-
         err = []
         for scen in error_dict['error']['best_config']['rc-']['scenario'].keys():
             ind = np.where(np.array(error_dict['error']['best_config']['rc-']['scenario'][scen]['gt_categ'])== rcb) 
@@ -441,8 +437,7 @@ def err_per_reserve_capacity_table_all(methods, method_names, rc_type, file_name
             means.append((concatenated_str))
         
         mean_overall = np.mean(np.concatenate(err_overall))
-        std_overall = np.std(np.concatenate(err_overall))
-            
+        std_overall = np.std(np.concatenate(err_overall)) 
         #compute avg overpred score across all reserve capacities
         overpred_overall  = {}
         for th_ind, th in enumerate(threshold):
@@ -451,7 +446,6 @@ def err_per_reserve_capacity_table_all(methods, method_names, rc_type, file_name
         means.insert(0, "{:.2f}".format(mean_overall) + '\u00B1' + "{:.2f}".format(std_overall))
         for th_ind, th in enumerate(threshold):
                 means[0] += ' | ' + "{:.2f}".format(overpred_overall[th_ind]) + "%"
-
         #find the method with the best overall performance 
         results[method_names[m]] = means
         if mean_overall  + std_overall < min_mape['overall'][0]:
@@ -485,8 +479,7 @@ def err_per_reserve_capacity_table_all(methods, method_names, rc_type, file_name
                 result_str = (results[method_names[mmb]][rind+1]).split('|')
                 result_str[th_ind+1] = '<b>' + result_str[th_ind+1] + '</b>'
                 results[method_names[mmb]][rind+1] = '|'.join(result_str)
-                
-                    
+                          
     method_mape_best = min_mape['overall'][1]
     method_overpred_best = {}
     for th_ind, th in enumerate(threshold):
@@ -531,7 +524,7 @@ def err_per_reserve_capacity_table_all(methods, method_names, rc_type, file_name
     height=1000,  # Set the overall height of the table
     margin=dict(l=0, r=0, b=0, t=0),  # Adjust margins as needed
     )
-# Specify the column width
+    # Specify the column width
     column_widths = [40] + [140]*8
     for i, width in enumerate(column_widths):
         fig.update_layout(
@@ -539,24 +532,3 @@ def err_per_reserve_capacity_table_all(methods, method_names, rc_type, file_name
         )
     #fig.update_layout(width=1500, height=600)
     fig.write_image(file_name + rc_type + ".png", scale=2.0)
-
-
-if __name__ == '__main__':
-   
-    #list of methods
-    #'knn_drift', 'knn_bottom', 'rf_bottom', 'pnet_bottom', 'resnet_web_bottom', 'resnet_web_bottom_delta', 
-    #'resnet_web_bottom', 'pnet_bottom', 'pnet2_bottom', '] #'pnet_bottom_snorm','pnet_bottom_mnorm', 
-    #'pnet2_bottom', 'pnet2_bottom_snorm', 'pnet2_bottom_mnorm',]# 'resnet_web_bottom_cnorm', 'resnet_web_bottom_mnorm', 
-    #'resnet_web_bottom_delta_cnorm', 'resnet_web_bottom_delta_mnorm'
-
-    #methods = ['resnet_web_bottom_snorm', 'resnet_web_bottom_mnorm', 'pnet_bottom_snorm', 'pnet_bottom_mnorm', 'pnet2_bottom_snorm', 'pnet2_bottom_mnorm']
-    #method_names = [ 'Ours Resnet NormS', 'Ours Resnet NormM', 'PointNet NormS', 'PointNet NormM', 'PointNet++ NormS', 'PointNet++ NormM']
-    methods = ['pnet2_bottom_snorm_symmetric', 'pnet2_bottom_snorm_collapse_consistent', 'pnet2_bottom_snorm']
-    method_names = ['Symmetric', 'Collapse_consistent+Monotonic', 'All']
-    #lpror can be one of ['Symmetric', 'Collapse_consistent', 'Monotonic']
-    #lprot = ['Symmetric', 'Collapse_consistent', 'Monotonic']
-    lprot = ['Monotonic']
-    min_rc = 40 #40
-    err_per_reserve_capacity_table_all(methods, method_names, 'rc+', 'err_w_monotonic', min_rc, threshold=[0.1, 0.25], lprot=lprot)
-    err_per_reserve_capacity_table_all(methods, method_names, 'rc-', 'err_w_monotonic', min_rc, threshold=[0.1, 0.25], lprot=lprot)
-
