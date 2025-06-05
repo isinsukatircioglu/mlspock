@@ -8,26 +8,39 @@ This repository contains the code for the project titled "Machine Learning Suppo
   * ```conda env create -f environment.yml```
   * ```conda activate mlspock```
 ## Training
-You can train new networks using ```train.py```. For example:
+To train a Point Transformer (PTR) on the STEEL-3dPointClouds dataset:
 ```
-python train.py --model_type=pnet2 --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=train --batch_size=128 --epoch=200 --segment=bottom --norm=snorm
+python train.py --model_type=ptr --path_data=./data/mlspock_column_pc3d --mode=train --batch_size=32 --epoch=250 --segment=bottom --norm=snorm --scaling_mode=diff --model_size=small --version=1
 ```
-You can continue training a pre-trained model using *.pth files that can be referenced using local filenames. For example:
+You can finetune a pre-trained model using *.pth files that can be referenced using local filenames.
+To finetune our Point Transformer (PTR) on the STEEL-3dPointClouds dataset:
 ```
-python train.py --path_model=/myhome/mlspock/baselines/results/pnet2_bottom_all_snorm_2024-04-10_17-52-53 --model_type=pnet2 --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=train --batch_size=128 --epoch=50 --segment=bottom --norm=snorm
+python train.py --model_type=ptr --path_data=./data/mlspock_column_pc3d --mode=train --batch_size=32 --epoch=250 --segment=bottom --norm=snorm --scaling_mode=diff --model_size=small --version=1 --resume --path_model=./pretrained/ptr_small_segment[bottom]_snorm[diff_scale]_input[3d]_lprot[all]_batch_32_lr_0.0005_optimizer_AdamW_seed42_v1
 ```
-The results of each training run are saved to a newly created directory under ```~/results```.
+To finetune our scenario-based classification model PTR+Cls[All] on the STEEL-3dPointClouds dataset:
+```
+python train.py --model_type=ptr_classify --path_data=./data/mlspock_column_pc3d --mode=train --batch_size=32 --epoch=250 --segment=bottom --norm=snorm --scaling_mode=diff --model_size=small --classify=all --split=late --version=1 --resume --path_model=./pretrained/ptr_classify_small_segment[bottom]_snorm[diff_scale]_input[3d]_lprot[all]_batch_32_lr_0.0005_optimizer_AdamW_classify[all_late]_seed42_v1
+```
+To finetune our scenario-guided model PTR+[LR, BC, LP, CS] on the STEEL-3dPointClouds dataset:
+```
+python train.py --model_type=ptr --path_data=./data/mlspock_column_pc3d --mode=train --batch_size=32 --epoch=250 --segment=bottom --norm=snorm --scaling_mode=diff --model_size=small --lratio_known --boundary_known --lprotocol_known --dimension_known --version=1 --resume --path_model=./pretrained/ptr_small_segment[bottom]_snorm[diff_scale]_input[3d_lratio_boundary_lprot_colsize]_lprot[all]_batch_32_lr_0.0005_optimizer_AdamW_seed42_v1
+```
+The results of each training run are saved to a newly created directory under ```~/experiments```.
 
-You can evaluate a pre-trained model by ensuring that the model file is named ```best_model.pth```, and then setting the ```path_model``` option to the path where this file is located:
+You can evaluate a pre-trained model by ensuring that the model file is named ```best_model.pth```, and by setting the ```path_model``` option to the path where this file is located:
 ```
-python train.py --path_model=./pretrained/pnet2_bottom_all_snorm_2024-04-29_18-33-32 --model_type=pnet2 --path_data=/mydata/mlspock/shared/mlspock_column_pc3d --mode=eval --segment=bottom --norm=snorm
+python train.py --model_type=ptr --path_data=./data/mlspock_column_pc3d --mode=eval --batch_size=32 --segment=bottom --norm=snorm --scaling_mode=diff --model_size=small --version=1 --path_model=./pretrained/ptr_small_segment[bottom]_snorm[diff_scale]_input[3d]_lprot[all]_batch_32_lr_0.0005_optimizer_AdamW_seed42_v1
 ```
 ## Test
-To test the pretrained model on unseen examples, within each scenario folder, the 3D point cloud of each individual column should be saved in a separate .npy file, for instance:: ```/test_240430/W33X263-Collapse_consistent-RC90/pts029.npy (test_folder/scenario_name/p3d.npy)```.
+To test a pre-trained model on unseen examples, each scenario folder should contain the 3D point cloud of each individual column saved as a separate .npy file. For example: ```/test_240430/W33X263-Collapse_consistent-RC90/pts029.npy (test_folder/scenario_name/p3d.npy)```.
+You can then obtain predictions by running:
+```
+python train.py --model_type=ptr --path_data=./data/test_240430 --mode=test  --segment=bottom --norm=snorm --scaling_mode=diff --model_size=small --version=1 --path_model=./pretrained/ptr_small_segment[bottom]_snorm[diff_scale]_input[3d]_lprot[all]_batch_32_lr_0.0005_optimizer_AdamW_seed42_v1 --gt
+```
+or
+```
+python train.py --model_type=ptr_classify --path_data=./data/test_240430 --mode=test  --segment=bottom --norm=snorm --scaling_mode=diff --model_size=small --version=1 --path_model=./pretrained/ptr_classify_small_segment[bottom]_snorm[diff_scale]_input[3d]_lprot[all]_batch_32_lr_0.0005_optimizer_AdamW_classify[all_late]_seed42_v1 --classify=all --split=late --gt
+```
 
-Afterward, you can obtain the predictions by running:
-```
-python train.py --path_model=./pretrained/pnet2_bottom_all_snorm_2024-04-29_18-33-32 --model_type=pnet2 --path_data=/mydata/mlspock/shared/test_240430 --mode=test --segment=bottom --norm=snorm
-```
 ## Further Information
 This repository builds upon the codabase of [Pointnet, Pointnet++](https://github.com/yanx27/Pointnet_Pointnet2_pytorch) and [Point-Transformers](https://github.com/qq456cvb/Point-Transformers).
